@@ -1,9 +1,9 @@
-
+import spell
 
 class Basic_Form:
     life_multiplicator = 15
 
-    def __init__(self, name, monster_type, terrain, lore, strength, agility, intelligence, stamina, spell = []):
+    def __init__(self, name, monster_type, terrain, lore, strength, agility, intelligence, stamina, spells = []):
         self.name = name
         self.type = monster_type
         self.terrain = terrain
@@ -12,8 +12,7 @@ class Basic_Form:
         self.agility = agility
         self.intelligence = intelligence
         self.stamina = stamina
-        self.spell = spell
-        #self.max_life = self.stamina * self.life_multiplicator
+        self.spells = spells
         self.current_life = self.stamina * self.life_multiplicator
 
     @property
@@ -24,14 +23,17 @@ class Basic_Form:
     def changeLife(self, life_delta):
         self.current_life = self.current_life + life_delta
         return self.current_life
+
+    def learnSpell(self, spell):
+        self.spells.append(spell)
     
     
 class Physical_Animal(Basic_Form):
     
     attack_power_multiplicator = 10
     
-    def __init__(self, name, monster_type, terrain, lore, strength, agility, intelligence, stamina, max_rage, wrath, spell = []):
-        super().__init__(name, monster_type, terrain, lore, strength, agility, intelligence, stamina, spell = [])
+    def __init__(self, name, monster_type, terrain, lore, strength, agility, intelligence, stamina, max_rage, wrath, spells = []):
+        super().__init__(name, monster_type, terrain, lore, strength, agility, intelligence, stamina, spells = [])
         self.max_rage = max_rage
         self.wrath = wrath
         self.current_rage = 0
@@ -50,8 +52,8 @@ class Spell_Animal(Basic_Form):
     
     spell_power_multiplicator = 20
     
-    def __init__(self, name, monster_type, terrain, lore, strength, agility, intelligence, stamina, max_mana, mana_regen, spell = []):
-        super().__init__(name, monster_type, terrain, lore, strength, agility, intelligence, stamina, spell = [])
+    def __init__(self, name, monster_type, terrain, lore, strength, agility, intelligence, stamina, max_mana, mana_regen, spells = []):
+        super().__init__(name, monster_type, terrain, lore, strength, agility, intelligence, stamina, spells = [])
         self.max_mana = max_mana
         self.mana_regen = mana_regen
         self.current_mana = self.max_mana
@@ -66,10 +68,3 @@ class Spell_Animal(Basic_Form):
         return ap
 
 
-#TESTS 
-
-physical_1 = Physical_Animal("Silverback", "Mammal", "Forest", "Aber so was vomene krasse Schlaeger", 80, 40, 30, 80, 100, 20, "1")
-spell_1 = Spell_Animal("Silverback_Spell", "Mammal", "Forest", "Aber so was vomene krasse Schlaeger", 80, 40, 30, 80, 500, 20, "1")
-
-print(spell_1.current_mana)
-print(spell_1.changeMana(-100))
