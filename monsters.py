@@ -20,8 +20,7 @@ class Basic_Form:
         return new_life
     
     def changeLife(self, life_delta):
-        self.life_delta = life_delta
-        self.current_life = self.current_life + self.life_delta
+        self.current_life = self.current_life + life_delta
         return self.current_life
     
     
@@ -33,16 +32,16 @@ class Physical_Animal(Basic_Form):
         super().__init__(name, monster_type, terrain, lore, strength, agility, intelligence, stamina, spell = [])
         self.max_rage = max_rage
         self.wrath = wrath
-        self.current_rage = self.max_rage
+        self.current_rage = 0
 
-    def current_rage(self, rage_delta):
-        self.rage_delta = rage_delta
-        self.current_rage = self.current_rage + self.rage_delta
+    def changeRage(self, rage_delta):
+        self.current_rage = self.current_rage + rage_delta
         return self.current_rage
     
-    def attack_power_physical(self):
-        self.attack_power = self.attack_power_multiplicator * self.strength + self.attack_power_multiplicator * self.dexterity
-        return self.attack_power
+    @property
+    def attack_power(self):
+        ap = self.attack_power_multiplicator * self.strength + self.attack_power_multiplicator * self.agility
+        return ap
 
 
 class Spell_Animal(Basic_Form):
@@ -55,22 +54,18 @@ class Spell_Animal(Basic_Form):
         self.mana_regen = mana_regen
         self.current_mana = self.max_mana
         
-        def current_mana(self, mana_delta):
-            self.mana_delta = mana_delta
-            self.current_mana = self.current_mana + self.mana_delta
-            return self.current_mana
+    def changeMana(self, mana_delta):
+        self.current_mana = self.current_mana + mana_delta
+        return self.current_mana
         
-        def attack_power_spell(self):
-            self.attack_power = self.spell_power_multiplicator * self.intelligence
-            return self.attack_power
+    @property
+    def attack_power(self):
+        ap = self.spell_power_multiplicator * self.intelligence
+        return ap
 
 
 physical_1 = Physical_Animal("Silverback", "Mammal", "Forest", "Aber so was vomene krasse Schlaeger", 80, 40, 30, 80, 100, 20, "1")
+spell_1 = Spell_Animal("Silverback_Spell", "Mammal", "Forest", "Aber so was vomene krasse Schlaeger", 80, 40, 30, 80, 500, 20, "1")
 
-print(physical_1.current_life)
-print(physical_1.max_life)
-
-physical_1.stamina += 1
-
-print(physical_1.max_life)
-print(physical_1.current_life)
+print(spell_1.current_mana)
+print(spell_1.changeMana(-100))
