@@ -1,3 +1,5 @@
+
+
 class Basic_Form:
     life_multiplicator = 15
 
@@ -63,6 +65,8 @@ class Spell_Animal(Basic_Form):
         ap = self.spell_power_multiplicator * self.intelligence
         return ap
 
+
+#TESTS 
 
 physical_1 = Physical_Animal("Silverback", "Mammal", "Forest", "Aber so was vomene krasse Schlaeger", 80, 40, 30, 80, 100, 20, "1")
 spell_1 = Spell_Animal("Silverback_Spell", "Mammal", "Forest", "Aber so was vomene krasse Schlaeger", 80, 40, 30, 80, 500, 20, "1")
