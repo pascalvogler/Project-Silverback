@@ -5,9 +5,11 @@ import fight
 
 # TESTS 
 
-# Create two animals
-spell_animal_2 = monsters.Spell_Animal("Harpy Sorceress", "Mammal", "Forest", "Uses the element of wind to smash her enemies into a thousand pieces", 80, 40, 30, 80, 100, 20, "1")
+# Create animals
+spell_animal_2 = monsters.Spell_Animal("Harpy Sorceress", "Mammal", "Forest", "Uses the element of wind to smash her enemies into a thousand pieces", 80, 40, 1, 80, 100, 20, "1")
 spell_animal_1 = monsters.Spell_Animal("Silverback Wizard", "Mammal", "Forest", "Aber so was vomene krasse Schlaeger", 80, 40, 30, 80, 500, 20, "1")
+spell_animal_3 = monsters.Spell_Animal("Harpy Sorceress", "Mammal", "Forest", "Uses the element of wind to smash her enemies into a thousand pieces", 80, 40, 30, 80, 100, 20, "1")
+spell_animal_4 = monsters.Spell_Animal("Silverback Wizard", "Mammal", "Forest", "Aber so was vomene krasse Schlaeger", 80, 40, 30, 80, 500, 20, "1")
 
 
 # Summon four spells
@@ -42,7 +44,9 @@ player2 = player.player(name="Player 2", player_type='player')
 
 # Give each player a monster and print the return string from player.addMonster method
 print(player1.addMonster(spell_animal_2))
+print(player1.addMonster(spell_animal_3))
 print(player2.addMonster(spell_animal_1))
+print(player2.addMonster(spell_animal_4))
 
 fight.startFight(player1, player2, 0, 0)
 

@@ -14,6 +14,11 @@ class Spell:
   def __str__(self):
     return self.name+' does '+str(self.damage)+' damage and has crit chance of '+str(int(self.crit*100))+' %'
 
+  @property
+  def string_display(self):
+    _string = self.name + " Damage: " + str(self.damage) + " Mana Cost: " + str(self.mana_cost)
+    return _string
+
 
 def summonSpell(spell, element=None, modifier=None):
   '''Takes following arguments:

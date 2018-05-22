@@ -1,5 +1,17 @@
 import spell
 
+# Console colors used for __str__
+class bcolors:
+    HEADER = '\033[95m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    GREY = '\033[90m'
+    ENDC = '\033[0m'
+
 class Basic_Form:
     life_multiplicator = 15
 
@@ -22,6 +34,8 @@ class Basic_Form:
     
     def changeLife(self, life_delta):
         self.current_life = self.current_life + life_delta
+        if self.current_life < 0:
+            self.current_life = 0
         return self.current_life
 
     def learnSpell(self, spell):
@@ -29,8 +43,18 @@ class Basic_Form:
 
     @property
     def is_alive(self):
-        _is_alive = current_life<=0
+        _is_alive = self.current_life>0
         return _is_alive
+
+    @property
+    def string_display(self):
+        _string = self.name + " Life: " + str(self.current_life) + "/" + str(self.max_life)
+        if(self.is_alive == False):
+            _string = bcolors.GREY + _string + bcolors.ENDC
+        return _string
+
+
+    
     
     
     
@@ -91,3 +115,11 @@ class Spell_Animal(Basic_Form):
         all_actions = self.spells.copy()
         all_actions.insert(0, basic_attack)
         return all_actions
+
+    #different string display to show mana on spell animals
+    @property
+    def string_display(self):
+        _string = self.name + " Life: " + str(self.current_life) + "/" + str(self.max_life) + " Mana: " + str(self.current_mana) + "/" + str(self.max_mana)
+        if(self.is_alive == False):
+            _string = bcolors.GREY + _string + bcolors.ENDC
+        return _string
