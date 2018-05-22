@@ -26,6 +26,12 @@ class Basic_Form:
 
     def learnSpell(self, spell):
         self.spells.append(spell)
+
+    @property
+    def is_alive(self):
+        _is_alive = current_life<=0
+        return _is_alive
+    
     
     
 class Physical_Animal(Basic_Form):
@@ -53,7 +59,7 @@ class Physical_Animal(Basic_Form):
         attack_damage = self.attack_power
         basic_attack = spell.Spell(name='Basic Attack', damage=attack_damage, mana_cost=0)
         all_actions = self.spells.copy()
-        all_actions.append(basic_attack)
+        all_actions.insert(0, basic_attack)
         return all_actions
     
 
@@ -83,5 +89,5 @@ class Spell_Animal(Basic_Form):
         attack_damage = self.attack_power
         basic_attack = spell.Spell(name='Basic Attack', damage=attack_damage, mana_cost=0)
         all_actions = self.spells.copy()
-        all_actions.append(basic_attack)
+        all_actions.insert(0, basic_attack)
         return all_actions
