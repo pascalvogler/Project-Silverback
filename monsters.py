@@ -18,7 +18,7 @@ class Basic_Form:
     @property
     def max_life(self):
         new_life = self.stamina * self.life_multiplicator
-        return new_life
+        return new_life  
     
     def changeLife(self, life_delta):
         self.current_life = self.current_life + life_delta
@@ -47,6 +47,16 @@ class Physical_Animal(Basic_Form):
         ap = self.attack_power_multiplicator * self.strength + self.attack_power_multiplicator * self.agility
         return ap
 
+    # actions property copies object's spells and adds the basic attack based on attack power.
+    @property
+    def actions(self):
+        attack_damage = self.attack_power
+        basic_attack = spell.Spell(name='Basic Attack', damage=attack_damage, mana_cost=0)
+        all_actions = self.spells.copy()
+        all_actions.append(basic_attack)
+        return all_actions
+    
+
 
 class Spell_Animal(Basic_Form):
     
@@ -67,4 +77,11 @@ class Spell_Animal(Basic_Form):
         ap = self.spell_power_multiplicator * self.intelligence
         return ap
 
-
+    # actions property copies object's spells and adds the basic attack based on attack power.
+    @property
+    def actions(self):
+        attack_damage = self.attack_power
+        basic_attack = spell.Spell(name='Basic Attack', damage=attack_damage, mana_cost=0)
+        all_actions = self.spells.copy()
+        all_actions.append(basic_attack)
+        return all_actions
