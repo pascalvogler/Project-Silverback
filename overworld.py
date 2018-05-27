@@ -31,8 +31,16 @@ def movePlayer(arg_player, direction):
     return 0
   else:
     if(type(desired_tile.obj_on_top) == player.player):
-      fight_winner = fight.startFight(arg_player, desired_tile.obj_on_top, player_desired_pos[0], player_desired_pos[1])
+      # if moving to a tile with a player object on top, start fight
+      enemy = desired_tile.obj_on_top
+      fight_winner = fight.startFight(arg_player, enemy, player_desired_pos[0], player_desired_pos[1])
       # remove loser from game, put winner where he belongs
+      if fight_winner == arg_player:
+        despawnPlayer(enemy)
+      else:
+        #PLAYER LOSES QUIT GAME
+        print("You lose")
+
     else:
       player_map[arg_player.posx][arg_player.posy].removeObject()
       arg_player.posx = player_desired_pos[0]
@@ -41,12 +49,22 @@ def movePlayer(arg_player, direction):
       return 1
 
 def spawnPlayer(player, posx, posy, spawn_map):
+  ''' Assigns player to map_tile, sets player location properties '''
   player.posx = posx
   player.posy = posy
   players_arr.append(player)
   player_map = spawn_map
   player.current_map = spawn_map
   player_map[posx][posy].placeObject(player)
+
+def despawnPlayer(player):
+  ''' Removes player from map_tile, sets player location properties to None '''
+  player_current_pos = [player.posx, player.posy]
+  # Remove object that is on top of player tile (which is itself)
+  player.current_map[player.posx][player.posy].removeObject()
+  player.current_map = None
+  player.posx = None
+  player.posy = None
 
 def drawMap(themap):
   ''' draws the map in the console.

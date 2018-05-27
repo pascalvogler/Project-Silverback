@@ -67,7 +67,6 @@ spell_animal_4 = monsters.Spell_Animal(
   )
 
 
-
 # Summon four spells
 sp_heavy_bolt_fire = spell.summonSpell(spell='bolt', element='fire', modifier='heavy')
 sp_cunning_bolt_ice = spell.summonSpell(spell='bolt', element='ice', modifier='cunning')
@@ -104,13 +103,37 @@ print("\n")
 # Create two players
 player1 = player.player(
   name="Jenny", 
-  player_type='player'
+  player_type='player',
+  object_display='p'
   )
 
 player2 = player.player(
   name="Johnny", 
-  player_type='player'
+  player_type='player',
+  object_display='p'
   )
+
+pack_of_tigers = player.player(
+  name="Pack of Tigers",
+  player_type = 'player', 
+  object_display='t'
+  )
+
+# give 3 tigers to pack_of_tigers
+for i in range(1):
+  monster_tiger = monsters.Spell_Animal(
+    "Tiger",
+    "Mammal", 
+    "Forest", 
+    "Is hungry", 
+    strength=20, 
+    agility=30, 
+    intelligence=30, 
+    stamina=1, 
+    spells=[], 
+    level=1
+    )
+  pack_of_tigers.addMonster(monster_tiger)
 
 #give monsters to players
 print(player1.addMonster(spell_animal_1))
@@ -134,6 +157,14 @@ overworld.spawnPlayer(
   player=player2,
   posx=15, 
   posy=14,
+  spawn_map = this_map
+  )
+
+print("spawning pack of tigers")
+overworld.spawnPlayer(
+  player=pack_of_tigers, 
+  posx=8, 
+  posy=13,
   spawn_map = this_map
   )
 

@@ -13,13 +13,13 @@ x = {
 m = {
   'name':'Mountain', 
   'walkable':False,
-  'style':'BG_GREY'
+  'style':'BG_DARKGREY'
   }
 
 h = {
   'name':'High Mountain', 
   'walkable':False,
-  'style':'BG_DARKGREY'
+  'style':'BG_GREY'
   }
 
 w = {
