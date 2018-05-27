@@ -1,6 +1,8 @@
 import sys
 from random import randint
 import time
+import overworld
+import bot
 
 class bcolors:
     HEADER = '\033[95m'
@@ -15,16 +17,15 @@ class bcolors:
 
 
 class fight:
-    def __init__(self, player1, player2, locx, locy):
+    def __init__(self, player1, player2):
         self.player1 = player1
         self.player2 = player2
         self.player2_defeated = False
         self.player1.id = 0
         self.player2.id = 1
-        self.locx = locx            # NOT USED YET: coordinates for where the fight takes place
-        self.locy = locy
         self.current_turn = 1
         self.winner = None
+        self.loser = None
         self.current_turn_player = self.player1
         self.fight_state = 1        # fight_state = 1 means fight is active
         self.mainFight()
@@ -40,14 +41,16 @@ class fight:
             # check if any player has no monsters left
             if self.player1.is_defeated == True:
               self.winner = self.player2
-              self.endFight(winner=self.winner)
+              self.loser = self.player1
+              self.endFight(winner=self.winner, loser=self.loser)
               break
             elif self.player2.is_defeated == True:
               self.winner = self.player1
-              self.endFight(winner=self.winner)
+              self.loser = self.player2
+              self.endFight()
               break
             else:
-                self.nextTurn()
+              self.nextTurn()
 
 
     # COLOR FUNCTIONS
@@ -71,28 +74,13 @@ class fight:
         result = color+string+bcolors.ENDC
         return result
 
-    def printAttackResults(self, attack_results):
-        ''' takes an attack_results dict, which is obtained from monsterAttack()
-        prints the results of an attack'''
-        monster_attack = attack_results
-        # create colored strings of some attack results properties
-        attack_source_str = self.printMonsterName(monster_attack['source'])
-        attack_target_str = self.printMonsterName(monster_attack['target'])
-        action_str = self.printActionName(monster_attack['action'])
-        # print action
-        print(attack_source_str + " uses " + action_str + " on " + attack_target_str)
-        # print damage done
-        print(attack_target_str + " is " + "critically " * monster_attack['is_crit'] + "hit for " + str(monster_attack['total_damage']))
-        # print if a monster was killed
-        if monster_attack['target'].is_alive == False:
-            print(attack_target_str + " was killed.")
-
     def nextTurn(self):
         ''' Starts a turn, called from the mainFight loop.'''
         # print whose turn it is
         print("It's "+self.printPlayerName(self.current_turn_player)+"'s turn.")
         print("\n")
         time.sleep(1)
+        self.drawBattle()
         # call runTurn()
         self.runTurn(self.current_turn_player)
         # after Turn is run, switch whose turn it is
@@ -102,25 +90,35 @@ class fight:
         else:
             self.current_turn_player = self.player2
 
-    def endFight(self, winner):
+    def endFight(self):
         self.fight_state = 0
-        print(self.printPlayerName(winner) + " wins the match")
+        overworld.despawnPlayer(self.loser)
+        self.winner.regenerateMonsters()
+        print(self.printPlayerName(self.winner) + " wins the match")
 
     def runTurn(self, player):
         ''' takes player object as an argument, to know which player's turn it is'''
         # call drawBattle function to show the current status with players and monsters
-        self.drawBattle()
-        # Call selectMonster, using the current_player as an argument, to prompt user for input
-        # Store the chosen monster in selected_monster
-        selected_monster = self.selectMonster(player)
-        # Call selectAction, using the selected_monster as an argument, to prompt user for input
-        # Store the chosen action in selected_action
-        selected_action = self.selectAction(selected_monster)
-        # Call selectTarget, using the selected_action as an argument, to prompt user for input
-        # Store the chosen target in selected_target
-        selected_target = self.selectTarget(selected_action)
-        # Use the three objects to execute the attack, using monsterAttack() function
-        self.monsterAttack(selected_monster, selected_target, selected_action)
+        if player.player_type == 'player':
+            # Call selectMonster, using the current_player as an argument, to prompt user for input
+            # Store the chosen monster in selected_monster
+            selected_monster = self.selectMonster(player)
+            # Call selectAction, using the selected_monster as an argument, to prompt user for input
+            # Store the chosen action in selected_action
+            selected_action = self.selectAction(selected_monster)
+            # Call selectTarget, using the selected_action as an argument, to prompt user for input
+            # Store the chosen target in selected_target
+            selected_target = self.selectTarget(selected_action)
+            # Use the three objects to execute the attack, using monsterAttack() function
+            selected_monster.useAction(selected_target, selected_action)
+        elif player.player_type == 'bot':
+            if self.current_turn%2 == 1:
+                target_player = self.player2
+            elif self.current_turn%2 == 0:
+                target_player = self.player1
+            bot.runFightTurn(player, target_player)
+            # basically do the same as with player, but select automatically
+
 
     def drawBattle(self):
         ''' Draws the current state of the battle
@@ -189,7 +187,6 @@ class fight:
             else: 
                 print("Not enough mana")
 
-
     def selectTarget(self, action):
         if self.current_turn%2 == 1:
             target_player = self.player2
@@ -206,37 +203,6 @@ class fight:
         if selection-1 <= len(target_player.monsters):
             return target_player.monsters[selection-1]
 
-    def monsterAttack(self, source, target, action):
-        '''Takes: monster objects for source and target
-        spell object for action
-        Returns: dict of the attack results'''
-        action_name = action.name
-        action_damage = action.damage
-        action_effect = action.effect
-        action_mana_cost = action.mana_cost
-        action_element = action.element
-        action_crit = action.crit
-        # is attack a crit? 
-        is_crit = action.crit >= randint(0,100)/100
-        # crit damage = currently 50% of normal damage
-        crit_modifier = 0.5
-        crit_damage = int(action.damage * crit_modifier)
-        # if bool is_crit = False, is_crit * crit_damage = 0
-        total_damage = action.damage + is_crit * crit_damage
-
-        source.changeMana(-action.mana_cost)
-        target.changeLife(-total_damage)
-
-        # create dict of attack results and print using printAttackResults()
-        result_dict = {'action': action, 'source': source, 'target': target, 'is_crit': is_crit, 'crit_damage': crit_damage, 'total_damage': total_damage}
-        self.printAttackResults(result_dict)
-        time.sleep(1)
-        if not (target.is_alive):
-          source.gainXp(target.xp_reward)
-          time.sleep(1)
-
-        return
-
-def startFight(player1, player2, locy, locx):
-    this_fight = fight(player1, player2, locy, locx)
+def startFight(player1, player2):
+    this_fight = fight(player1, player2)
     return this_fight.winner

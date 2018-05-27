@@ -1,5 +1,6 @@
 import maps
 import object_tiles
+import fight
 
 class bcolors:
     HEADER = '\033[95m'
@@ -16,11 +17,11 @@ class bcolors:
 
 
 class player:
-  def __init__(self, name, object_display, level=1, fight_state=0, player_type='Bot'):
+  def __init__(self, name, object_display, level=1, fight_state=0, player_type='bot'):
     self.name = name
     self.level = level
     self.monsters = []
-    self.items = []
+    self.inventory = []
     self.posx = None
     self.posy = None
     self.current_map = None
@@ -47,4 +48,12 @@ class player:
     self.monsters.append(monster)
     result_string = self.name + " gets a new "+monster.name
     return result_string
+
+  def regenerateMonsters(self):
+    for monster in self.monsters:
+      monster.current_life = monster.max_life
+      monster.current_mana = monster.max_mana 
+
+  def collisionAction(self, player):
+    fight.startFight(player, self)
   

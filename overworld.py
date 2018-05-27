@@ -29,24 +29,16 @@ def movePlayer(arg_player, direction):
   if(desired_tile.walkable == False):
     print("Can't go there")
     return 0
+  elif desired_tile.obj_on_top != None:
+    # If there's an obj_on_top of the tile, trigger that object's collisionAction
+    desired_tile.obj_on_top.collisionAction(arg_player)
   else:
-    if(type(desired_tile.obj_on_top) == player.player):
-      # if moving to a tile with a player object on top, start fight
-      enemy = desired_tile.obj_on_top
-      fight_winner = fight.startFight(arg_player, enemy, player_desired_pos[0], player_desired_pos[1])
-      # remove loser from game, put winner where he belongs
-      if fight_winner == arg_player:
-        despawnPlayer(enemy)
-      else:
-        #PLAYER LOSES QUIT GAME
-        print("You lose")
-
-    else:
-      player_map[arg_player.posx][arg_player.posy].removeObject()
-      arg_player.posx = player_desired_pos[0]
-      arg_player.posy = player_desired_pos[1]
-      player_map[arg_player.posx][arg_player.posy].placeObject(arg_player)
-      return 1
+    # If tile is walkable and no object on top, remove player from current tile and place on next tile
+    player_map[arg_player.posx][arg_player.posy].removeObject()
+    arg_player.posx = player_desired_pos[0]
+    arg_player.posy = player_desired_pos[1]
+    player_map[arg_player.posx][arg_player.posy].placeObject(arg_player)
+    return 1
 
 def spawnPlayer(player, posx, posy, spawn_map):
   ''' Assigns player to map_tile, sets player location properties '''
