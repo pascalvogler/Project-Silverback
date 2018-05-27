@@ -11,4 +11,3 @@ blast = {
   'crit': 0.05, 
   'mana_cost': 200
 }
-

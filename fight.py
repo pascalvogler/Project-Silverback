@@ -1,4 +1,3 @@
-import player
 import sys
 from random import randint
 import time
@@ -14,16 +13,18 @@ class bcolors:
     ENDC = '\033[0m'
 
 
+
 class fight:
     def __init__(self, player1, player2, locx, locy):
         self.player1 = player1
         self.player2 = player2
         self.player2_defeated = False
-        self.player1.id = 1
-        self.player2.id = -1
+        self.player1.id = 0
+        self.player2.id = 1
         self.locx = locx            # NOT USED YET: coordinates for where the fight takes place
         self.locy = locy
-        self.current_turn = 1       # current_turn = 1 means player1's turn, -1 is player2 turn
+        self.current_turn = 1
+        self.winner = None
         self.current_turn_player = self.player1
         self.fight_state = 1        # fight_state = 1 means fight is active
         self.mainFight()
@@ -34,6 +35,7 @@ class fight:
         If so, calls endFight()
         Else, calls nextTurn() 
         NOTE: fight_state is not used? '''
+        print(bcolors.RED+"Fight starts: "+self.player1.name+" vs "+self.player2.name+bcolors.ENDC)
         while self.fight_state == 1:
             self.player1_num_alive_monsters = 0
             self.player2_num_alive_monsters = 0
@@ -45,9 +47,11 @@ class fight:
                     self.player2_num_alive_monsters+=1
             if(self.player1_num_alive_monsters == 0):
                 self.endFight(winner=self.player2)
+                self.winner = self.player2
                 break
             elif(self.player2_num_alive_monsters == 0):
                 self.endFight(winner=self.player1)
+                self.winner = self.player2
                 break
             else:
                 self.nextTurn()
@@ -64,6 +68,15 @@ class fight:
 
     def printActionName(self, action):
         return bcolors.RED+action.name+bcolors.ENDC
+
+    def colorString(self, string, color):
+        ''' Args:
+        string: str
+        color: color from bcolors class
+        Returns:
+        string in selected color '''
+        result = color+string+bcolors.ENDC
+        return result
 
     def printAttackResults(self, attack_results):
         ''' takes an attack_results dict, which is obtained from monsterAttack()
@@ -90,15 +103,15 @@ class fight:
         # call runTurn()
         self.runTurn(self.current_turn_player)
         # after Turn is run, switch whose turn it is
-        self.current_turn*=-1
-        if self.current_turn == 1:
+        self.current_turn+=1
+        if self.current_turn%2 == 1:
             self.current_turn_player = self.player1
         else:
             self.current_turn_player = self.player2
 
     def endFight(self, winner):
         self.fight_state = 0
-        print(winner.name + " wins the match")
+        print(self.printPlayerName(winner) + " wins the match")
 
     def runTurn(self, player):
         ''' takes player object as an argument, to know which player's turn it is'''
@@ -114,10 +127,7 @@ class fight:
         # Store the chosen target in selected_target
         selected_target = self.selectTarget(selected_action)
         # Use the three objects to execute the attack, using monsterAttack() function
-        # Store the attack results dict in monster_attack
-        monster_attack = self.monsterAttack(selected_monster, selected_target, selected_action)
-        # Print the attack results using printAttackResults function
-        self.printAttackResults(monster_attack)
+        self.monsterAttack(selected_monster, selected_target, selected_action)
         time.sleep(1)
 
     def drawBattle(self):
@@ -144,7 +154,7 @@ class fight:
         # List available monsters and print them
         selector_counter = 1
         for monster in player.monsters:
-            print(str(selector_counter) + ": "+monster.string_display)
+            print(str(selector_counter) + ": "+monster.string_display_name)
             selector_counter+=1
 
         while True:
@@ -166,8 +176,7 @@ class fight:
         ''' prompts user for input to select what action to take
         Argument: selected_monster (obj Monster) -> which monster's actions to list
         returns: Action selected'''
-        print(selected_monster.name)
-        print("\n")
+        print(self.printMonsterName(selected_monster))
         print("Actions: ")
         # List this monster's available actions using Spell.string_display property
         selector_counter = 1
@@ -190,9 +199,9 @@ class fight:
 
 
     def selectTarget(self, action):
-        if self.current_turn == 1:
+        if self.current_turn%2 == 1:
             target_player = self.player2
-        elif self.current_turn == -1:
+        elif self.current_turn%2 == 0:
             target_player = self.player1
         print("Which monster do you want to attack?")
         selector_counter = 1
@@ -226,10 +235,16 @@ class fight:
         source.changeMana(-action.mana_cost)
         target.changeLife(-total_damage)
 
-        #if target dead do whatever
-
+        # create dict of attack results and print using printAttackResults()
         result_dict = {'action': action, 'source': source, 'target': target, 'is_crit': is_crit, 'crit_damage': crit_damage, 'total_damage': total_damage}
-        return result_dict
+        self.printAttackResults(result_dict)
+        time.sleep(1)
+        if not (target.is_alive):
+            source.gainXp(target.xp_reward)
+        time.sleep(1)
+
+        return
 
 def startFight(player1, player2, locy, locx):
     this_fight = fight(player1, player2, locy, locx)
+    return this_fight.winner
