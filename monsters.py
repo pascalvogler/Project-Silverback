@@ -15,10 +15,6 @@ class bcolors:
 class Basic_Form:
     life_multiplier = 15
 
-    def xp_to_next_level(self, current_level):
-        _xp_to_next_lvl = int(500*current_level**1.2)
-        return _xp_to_next_lvl
-
     @property
     def xp_reward(self):
         return self.level*100
@@ -36,7 +32,12 @@ class Basic_Form:
         self.current_life = self.stamina * self.life_multiplier
         self.level = level
         self.xp =  0
-    
+
+    @property
+    def xp_to_next_level(self):
+        _xp_to_next_lvl = int(500*self.level**1.2)
+        return _xp_to_next_lvl
+
     @property
     def max_life(self):
         new_life = self.stamina * self.life_multiplier
@@ -57,13 +58,17 @@ class Basic_Form:
         exp: Experience to add (int)
         Returns: None
         '''
-        self.xp += exp
+        def addXp(_xp):
+            self.xp += _xp
+            xp_to_next_lvl = self.xp_to_next_level
+            if(self.xp >= xp_to_next_lvl):
+                _xp_remainder = self.xp - xp_to_next_lvl
+                self.levelUp()
+                addXp(_xp_remainder)
+
         print(self.name + " has gained "+ str(exp) + " Experience.")
-        xp_to_next_lvl = self.xp_to_next_level(self.level)
-        if(self.xp >= xp_to_next_lvl):
-            _xp_remainder = self.xp - xp_to_next_lvl
-            self.levelUp()
-            self.gainXp(_xp_remainder)
+        addXp(exp)
+        
         return True
 
     def levelUp(self):

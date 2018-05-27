@@ -37,22 +37,15 @@ class fight:
         NOTE: fight_state is not used? '''
         print(bcolors.RED+"Fight starts: "+self.player1.name+" vs "+self.player2.name+bcolors.ENDC)
         while self.fight_state == 1:
-            self.player1_num_alive_monsters = 0
-            self.player2_num_alive_monsters = 0
-            for monster in self.player1.monsters:
-                if monster.is_alive == True:
-                    self.player1_num_alive_monsters+=1
-            for monster in self.player2.monsters:
-                if monster.is_alive == True:
-                    self.player2_num_alive_monsters+=1
-            if(self.player1_num_alive_monsters == 0):
-                self.endFight(winner=self.player2)
-                self.winner = self.player2
-                break
-            elif(self.player2_num_alive_monsters == 0):
-                self.endFight(winner=self.player1)
-                self.winner = self.player2
-                break
+            # check if any player has no monsters left
+            if self.player1.is_defeated == True:
+              self.winner = self.player2
+              self.endFight(winner=self.winner)
+              break
+            elif self.player2.is_defeated == True:
+              self.winner = self.player1
+              self.endFight(winner=self.winner)
+              break
             else:
                 self.nextTurn()
 
@@ -128,7 +121,6 @@ class fight:
         selected_target = self.selectTarget(selected_action)
         # Use the three objects to execute the attack, using monsterAttack() function
         self.monsterAttack(selected_monster, selected_target, selected_action)
-        time.sleep(1)
 
     def drawBattle(self):
         ''' Draws the current state of the battle
@@ -240,8 +232,8 @@ class fight:
         self.printAttackResults(result_dict)
         time.sleep(1)
         if not (target.is_alive):
-            source.gainXp(target.xp_reward)
-        time.sleep(1)
+          source.gainXp(target.xp_reward)
+          time.sleep(1)
 
         return
 
