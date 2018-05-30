@@ -1,3 +1,5 @@
+import objects
+
 o = {
   'name':'Open Space', 
   'walkable':True,
@@ -27,4 +29,10 @@ w = {
   'walkable':False,
   'style':'BG_BLUE'
   }
+
+d = {
+  'name':'Door',
+  'walkable':True,
+  'style':'BG_DARKGREY'
+}
 
