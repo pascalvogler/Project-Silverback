@@ -149,11 +149,17 @@ class fight:
 
         while True:
             # Ask user for input
-            selection = input("Choose Monster: ")
+            no_valid_input = True
+            while no_valid_input == True:
+                selection = input("Choose Monster: ")
             # User input is string, so has to be converted to int
             # TODO: Catch error if int conversion fails! (handle incorrect input)
             # if selection-1 <= len(player.monsters):
-            selection = int(selection)
+                try:
+                    selection = int(selection)
+                    no_valid_input = False
+                except:
+                    print("Invalid Input")      
             # If that monster is alive, return the monster (breaks while loop)
             # selection-1 because arrays start at zero
             if player.monsters[selection-1].is_alive:
@@ -177,9 +183,18 @@ class fight:
         # Ask user for input
         # TO DO: Handle incorrect input, same as selectMonster!
         # TO DO: Currently only works with MANA, not rage!
+        no_valid_input=True
         while True:
-            selection = input("Choose Action: ")
-            selection = int(selection)
+            while no_valid_input == True:
+                selection = input("Choose Action: ")
+            # User input is string, so has to be converted to int
+            # TODO: Catch error if int conversion fails! (handle incorrect input)
+            # if selection-1 <= len(player.monsters):
+                try:
+                    selection = int(selection)
+                    no_valid_input = False
+                except:
+                    print("Invalid Input")   
             # If mana cost lower or equal to monster's current mana, return action
             if selected_monster.actions[selection-1].mana_cost <= selected_monster.current_mana:
                 return selected_monster.actions[selection-1]
@@ -198,8 +213,17 @@ class fight:
             print(str(selector_counter) + ": "+monster.string_display)
             selector_counter+=1
         print("\n")
-        selection = input("Select target: ")
-        selection = int(selection)
+        no_valid_input  = True
+        while no_valid_input == True:
+            selection = input("Choose Target: ")
+        # User input is string, so has to be converted to int
+        # TODO: Catch error if int conversion fails! (handle incorrect input)
+        # if selection-1 <= len(player.monsters):
+            try:
+                selection = int(selection)
+                no_valid_input = False
+            except:
+                print("Invalid Input")   
         if selection-1 <= len(target_player.monsters):
             return target_player.monsters[selection-1]
 
