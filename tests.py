@@ -4,6 +4,8 @@ import player
 import fight
 import overworld
 import maps
+import random_map_test
+import objects
 
 # change directory to directory of this file, for importing maps
 import os
@@ -100,10 +102,10 @@ for spell in spell_animal_1.spells:
     print(spell)
 print("\n")
 
-# Create two players
+# players
 player1 = player.player(
   name="Johnny", 
-  player_type='bot',
+  player_type='player',
   object_display='p'
   )
 
@@ -117,6 +119,10 @@ pack_of_tigers = player.player(
   name="Pack of Tigers",
   player_type = 'bot', 
   object_display='t'
+  )
+
+testobj = objects.container(
+  name="Chest"
   )
 
 # give 3 tigers to pack_of_tigers
@@ -142,46 +148,22 @@ print(player2.addMonster(spell_animal_3))
 print(player2.addMonster(spell_animal_4))
 
 print("creating map...")
-this_map = maps.createMap("maps/map1.txt")
+random_map = random_map_test.randomEmptyRoom()
+this_map = maps.createMapFromList(random_map)
 
-print("spawning player 1")
-overworld.spawnPlayer(
-  player=player1, 
-  posx=8, 
-  posy=8,
-  spawn_map = this_map
-  )
+overworld.randomSpawn(obj=player1, spawn_map=this_map)
+overworld.randomSpawn(obj=player2, spawn_map = this_map)
+overworld.randomSpawn(obj=pack_of_tigers, spawn_map = this_map)
+overworld.randomSpawn(obj=testobj, spawn_map = this_map)
 
-print("spawning player 2")
-overworld.spawnPlayer(
-  player=player2,
-  posx=15, 
-  posy=14,
-  spawn_map = this_map
-  )
-
-print("spawning pack of tigers")
-overworld.spawnPlayer(
-  player=pack_of_tigers, 
-  posx=8, 
-  posy=13,
-  spawn_map = this_map
-  )
-
-overworld.drawMap(this_map)
+overworld.drawMap(player1, player1.current_map)
 
 while True: 
   command = input("Move (n, e, s, w): ")
   if command in ("n", "e", "s", "w"):
     print("moving Player 1: "+command)
     overworld.movePlayer(player1, command)
-    # Tests for changing cursor position
-    #print("\0337")
-    #print("\033[2J")
-    #print("\033[H")
-    overworld.drawMap(this_map)
-    #print("\0338")
-
+    overworld.drawMap(player1, player1.current_map)
   else:
     print("invalid input")
 
