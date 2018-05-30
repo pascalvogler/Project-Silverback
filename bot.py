@@ -1,4 +1,3 @@
-
 def runFightTurn(bot, enemy_player):
     # Call selectMonster, using the bot as an argument, so AI can choose monster from bot's monster array
     # Store the chosen monster in selected_monster
@@ -7,12 +6,17 @@ def runFightTurn(bot, enemy_player):
     selected_action = selectAction(selected_monster)
     # Call selectTarget, giving the bot player as the player that it's fighting against
     selected_target = selectTarget(enemy_player)
-    # Use the three objects to execute the attack, using monsterAttack() function
+    # Use the three objects to execute the attack, using monster's useAction method
     selected_monster.useAction(selected_target, selected_action)
 
 def selectMonster(bot):
-    ''' Bot selects a monster to use '''
-
+    ''' 
+    Bot selects a monster to use 
+    Arguments:
+    bot (player object)
+    Returns:
+    (monster object)
+    '''
     # select the first monster that has enough mana to use a spell
     for monster in bot.monsters:
         if monster.is_alive == True:
@@ -31,7 +35,13 @@ def selectMonster(bot):
     return highest_damage_monster
 
 def selectAction(selected_monster):
-    ''' Bot selects action to use. Selects first spell that can be used, otherwise uses basic attack '''
+    ''' 
+    Bot selects action to use. Selects first spell that can be used, otherwise uses basic attack 
+    Args:
+    selected_monster (monster object)
+    Returns:
+    (action object)
+    '''
     this_monster = selected_monster
     for spell in this_monster.spells:
         if(this_monster.current_mana >= spell.mana_cost):
@@ -40,6 +50,13 @@ def selectAction(selected_monster):
     return this_monster.actions[0]
 
 def selectTarget(enemy_player):
+    '''
+    Selects a target for an attack. Chooses the monster of a player that has the lowest hp
+    Args:
+    enemy_player (player object)
+    Returns:
+    (monster object)
+    '''
     enemy_alive_monsters = []
     for monster in enemy_player.monsters:
         if monster.is_alive==True:
