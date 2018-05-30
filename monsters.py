@@ -71,7 +71,12 @@ class Basic_Form:
         Arguments:
         damage (int): Amount of damage dealt
         damage_source (monster object): who's dealing the damage
+        Returns:
+        0 if target is dead and no damage dealt
+        1 if damage is dealt
         '''
+        if self.is_alive == False:
+            return 0
         self.current_life-=damage
         if self.current_life < 0:
             self.current_life = 0
@@ -79,6 +84,7 @@ class Basic_Form:
             print(printMonsterName(self) + " was killed.")
             time.sleep(1)
             damage_source.gainXp(self.xp_reward)
+            return 1
 
     def heal(self, amount):
         self.current_life += amount
@@ -135,12 +141,12 @@ class Basic_Form:
         crit_damage = int(action.damage * crit_modifier)
         # if bool is_crit = False, is_crit * crit_damage = 0
         total_damage = action.damage + is_crit * crit_damage
-
-        self.changeMana(-action.mana_cost)
         
         # create dict of attack results and print using printAttackResults()
         result_dict = {'action': action, 'source': self, 'target': target, 'is_crit': is_crit, 'crit_damage': crit_damage, 'total_damage': total_damage}
         printAttackResults(result_dict)
+
+        self.changeMana(-action.mana_cost)
         target.receiveDamage(total_damage, self)
     
     
